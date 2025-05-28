@@ -52,7 +52,7 @@ async fn main() -> std::io::Result<()> {
             .route("/encurtar", web::post().to(encurtar))
             .route("/{id}", web::get().to(redirecionar))
     })
-    .bind(("127.0.0.1", 9999))?
+    .bind(("0.0.0.0", 9999))?
     .run()
     .await
 }
