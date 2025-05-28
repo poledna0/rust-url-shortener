@@ -29,7 +29,7 @@ async fn encurtar(url_data: web::Json<UrlInput>) -> impl Responder {
     map.insert(short_id.clone(), url_data.url.clone());
 
     HttpResponse::Ok().json(UrlOutput {
-        short: format!("http://localhost:9999/{}", short_id),
+        short: format!("->{}", short_id),
     })
 }
 
