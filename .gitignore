@@ -1,1 +1,3 @@
-rust-url-shortener/target
+/target
+.env
+.idea
