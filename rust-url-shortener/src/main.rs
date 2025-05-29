@@ -2,11 +2,12 @@ use actix_web::{web, App, HttpResponse, HttpServer, Responder};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::sync::Mutex;
-use rand::{distributions::Alphanumeric, Rng};
+use std::u8;
 use lazy_static::lazy_static;
 
+static mut CONT:u8 = 0;
 lazy_static! {
-    static ref URL_MAP: Mutex<HashMap<String, String>> = Mutex::new(HashMap::new());
+    static ref URL_MAP: Mutex<HashMap<u8, String>> = Mutex::new(HashMap::new());
 }
 
 #[derive(Deserialize)]
@@ -20,22 +21,19 @@ struct UrlOutput {
 }
 async fn encurtar(url_data: web::Json<UrlInput>) -> impl Responder {
     let mut map = URL_MAP.lock().unwrap();
-    let short_id: String = rand::thread_rng()
-        .sample_iter(&Alphanumeric)
-        .take(4)
-        .map(char::from)
-        .collect();
-
-    map.insert(short_id.clone(), url_data.url.clone());
-
-    HttpResponse::Ok().json(UrlOutput {
-        short: format!("->{}", short_id),
-    })
+     
+    unsafe {
+        let short_id:u8  = CONT + 1;
+        CONT += 1;
+        map.insert(short_id, url_data.url.clone());
+        HttpResponse::Ok().json(UrlOutput {short: format!("->{}", short_id),})
+    }
 }
 
 async fn redirecionar(path: web::Path<String>) -> impl Responder {
     let map = URL_MAP.lock().unwrap();
-    if let Some(url) = map.get(&path.into_inner()) {
+    let end = path.to_string().parse::<u8>().expect("ero na conversão para u8");
+    if let Some(url) = map.get(&end) {
         HttpResponse::Found()
             .append_header(("Location", url.clone()))
             .finish()
