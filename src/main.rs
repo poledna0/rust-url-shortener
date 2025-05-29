@@ -53,7 +53,6 @@ async fn encurtar(url_data: web::Json<UrlInput>) -> impl Responder {
             return HttpResponse::Ok().json(saida)
         }
     }
-    
     HttpResponse::BadRequest().body(" err time > 24")
 }
 
@@ -73,7 +72,8 @@ async fn redirecionar(path: web::Path<String>) -> impl Responder {
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
 
-
+    dotenv::dotenv().ok();
+    
     HttpServer::new(|| {
         App::new()
             .route("/encurtar", web::post().to(encurtar))
