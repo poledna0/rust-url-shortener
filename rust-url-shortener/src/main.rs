@@ -32,7 +32,7 @@ async fn encurtar(url_data: web::Json<UrlInput>) -> impl Responder {
 
 async fn redirecionar(path: web::Path<String>) -> impl Responder {
     let map = URL_MAP.lock().unwrap();
-    let end = path.to_string().parse::<u8>().expect("ero na conversão para u8");
+    let end = path.parse::<u8>().expect("ero na conversão para u8");
     if let Some(url) = map.get(&end) {
         HttpResponse::Found()
             .append_header(("Location", url.clone()))
